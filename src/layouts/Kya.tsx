@@ -13,7 +13,8 @@ function Kya() {
     useEffect(() => {
         if(typeof window !== "undefined"){
             window.addEventListener("load", ()=>{
-                let connect = JSON.parse(localStorage.getItem('address'));
+                let addressStorage: any = (localStorage.getItem('address'));
+                let connect = JSON.parse(addressStorage);
                 setTimeout(()=>{
                     connect == null ? setAccept(false) : setConnection(true);
                 },2000);
@@ -55,7 +56,7 @@ function Kya() {
                                 </ul>
                             </div>
                             
-                            <p><b>The anetaBTC team doesn't guarantee the absence of bugs and errors.<br/>app.anetabtc.io is without a Know Your Customer (KYC) process and can offer NO assistance if a user is hacked or cheated out of passwords, currency or private wallet keys.</b></p>
+                            <p><b>The anetaBTC team {"doesn't"} guarantee the absence of bugs and errors.<br/>app.anetabtc.io is without a Know Your Customer (KYC) process and can offer NO assistance if a user is hacked or cheated out of passwords, currency or private wallet keys.</b></p>
                             <p><b>NOTICE:</b><br/>This build of app.anetabtc.io is classed as <b>BETA.</b><br/>You should only use this build for testing purposes.<br/>app.anetbtc.io will not be liable for any losses incurred on the user, this includes losses caused by bugs, errors, downtimes or exploits.
                             </p>
                         </div>

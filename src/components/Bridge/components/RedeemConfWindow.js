@@ -49,8 +49,23 @@ function RedeemConfWindow({eBTC, btcAddress, nautilusAddress, txInfo, popupr, se
 
 
     useEffect(() => {
-        writeToDB(nautilusAddress, btcAddress, eBTC, txInfo)
-    }, []);
+        async function writeToDB(nautilusAddress, btcAddress, eBTC, txInfo) {
+          try {
+            const docRef = await addDoc(collection(db, "users"), {
+              erg_address: nautilusAddress,
+              btc_address: btcAddress,
+              amount: eBTC,
+              datetime: new Date().toUTCString(),
+              erg_txid: txInfo,
+              info: "Redeem Order Submitted"
+            });
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+        }
+      
+        writeToDB(nautilusAddress, btcAddress, eBTC, txInfo);
+      }, [nautilusAddress, btcAddress, eBTC, txInfo, db]);
 
 
 
@@ -111,21 +126,7 @@ function RedeemConfWindow({eBTC, btcAddress, nautilusAddress, txInfo, popupr, se
         </div>
     )
 
-    async function writeToDB(nautilusAddress, btcAddress, eBTC, txInfo) {
-        try {
-            const docRef = await addDoc(collection(db, "users"), {
-                erg_address: nautilusAddress,
-                btc_address: btcAddress,
-                amount: eBTC,
-                datetime: new Date().toUTCString(),
-                erg_txid: txInfo,
-                info: "Redeem Order Submitted"
-            });
 
-        } catch (e) {
-            console.error("Error adding document: ", e);
-        }
-    }
 }
 
 

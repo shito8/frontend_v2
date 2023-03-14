@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo} from "react";
+import React, {useEffect, useState, useMemo, useCallback} from "react";
 
 //////////////////////////////
 import {initializeApp} from "firebase/app";
@@ -14,6 +14,16 @@ import firebaseConfig from "../../../firebase/firebaseConfig";
 
 function Transactions() {
 
+    interface Transaction {
+        info: string;
+        erg_address: string;
+        amount: number;
+        datetime: string;
+        ebtc_mint_tx_id: string;
+        erg_txid: string;
+        id: string;
+      }
+
     
     const app = useMemo(() => {
         if (typeof window !== 'undefined') {
@@ -21,95 +31,100 @@ function Transactions() {
         }
       }, []);
       const analytics = useMemo(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && app !== undefined) {
           return getAnalytics(app);
         }
       }, [app]);
       const db = useMemo(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && app !== undefined) {
           return getFirestore(app);
         }
       }, [app]);
 
 
-    const [products, setProducts] = useState([]);
+      const [products, setProducts] = useState<Array<{
+        id: string,
+        datetime: string,
+        amount: number,
+        btc_address: string,
+        erg_txid: string,
+        info: string,
+        btc_tx_id: string,
+        ebtc_mint_tx_id: string,
+        erg_address: string
+    }>>([]);
     const [address, setAddress] = useState<any>('')
-    const [idN, setId] = useState([]);
     const [getTxs, setGetTxs] = useState(true);
     let txs:any = [{}];
-    let txs2 = [{}]
 
     const [order, setOrder] = useState(false);
 
 
+    const loadTx = useCallback(async () => {
+        if(db){
+          const colRef = collection(db, "users");
+          const snapshot = await getDocs(colRef);
+          const txs: any = [];
+          snapshot.forEach(doc => {
+            txs.push(
+              {
+                "id": doc.id,
+                "datetime": doc.data().datetime,
+                "amount": doc.data().amount,
+                "btc_address": doc.data().btc_address,
+                "erg_txid": doc.data().erg_txid,
+                "info": doc.data().info,
+                "btc_tx_id": doc.data().btc_tx_id,
+                "ebtc_mint_tx_id": doc.data().ebtc_mint_tx_id,
+                "erg_address": doc.data().erg_address
+              }
+            )
+          })
+          setProducts(txs)
+          setOrder(true)
+        }
+      }, [db, setProducts]);
 
     useEffect(() => {
         if(typeof window !== "undefined"){
             let addressStorage: any = (localStorage.getItem('address'));
-        try{
-            setAddress(JSON.parse(addressStorage))
-        }catch (e) {
-            setAddress('')
-        }
-        if(getTxs){
-            loadTx()
-            setGetTxs(false)
-        }
-    }
-    });
-
-
-    async function loadTx() {
-        const colRef = collection(db, "users");
-        const snapshot = await getDocs(colRef);
-        snapshot.forEach(doc => {
-            txs.push(
-                {
-                    "id": doc.id,
-                    "datetime": doc.data().datetime,
-                    "amount": doc.data().amount,
-                    "btc_address": doc.data().btc_address,
-                    "erg_txid": doc.data().erg_txid,
-                    "info": doc.data().info,
-                    "btc_tx_id": doc.data().btc_tx_id,
-                    "ebtc_mint_tx_id": doc.data().ebtc_mint_tx_id,
-                    "erg_address": doc.data().erg_address
-
-                }
-            )
-        })
-
-
-        setProducts(txs)
-        setOrder(true)
-
-    }
-
-    useEffect(()=>{
-        if(order){
-            orderProducts()
-        }
-     },[order]);
-
-
-    function orderProducts() {
-
-        /* ORDER AND CLEAN products */
-
-        const newProducts:any = []
-        for (const indice of products) {
-            if(isNaN(Date.parse(indice.datetime))){
-            }else{
-                newProducts.push(indice)
+            try{
+                setAddress(JSON.parse(addressStorage))
+            }catch (e) {
+                setAddress('')
+            }
+            if(getTxs){
+                loadTx()
+                setGetTxs(false)
             }
         }
-        newProducts.sort(function(a,b){
-            return (Date.parse(b.datetime)-Date.parse(a.datetime))
-        })
-        return newProducts
-        
-        
-     }
+    }, [getTxs, loadTx]);
+
+
+    const orderProducts = useCallback(() => {
+        /* ORDER AND CLEAN products */
+      
+        const newProducts: any = []
+        for (const indice of products) {
+          if (isNaN(Date.parse(indice.datetime))) {
+          } else {
+            newProducts.push(indice)
+          }
+        }
+        function compare(a: { datetime: string }, b: { datetime: string }) {
+          return Date.parse(b.datetime) - Date.parse(a.datetime);
+        }
+      
+        newProducts.sort(compare);
+      
+        return newProducts;
+      }, [products]);
+      
+      useEffect(() => {
+        if (order) {
+          orderProducts();
+        }
+      }, [order, orderProducts]);
 
    
 
@@ -146,9 +161,6 @@ function Transactions() {
     )
 
     function MintPage() {
-        const bridge = 0.005
-        const br = 32
-
 
         return (
             <div className="mainmenu_transaction">
@@ -172,16 +184,16 @@ function Transactions() {
                 {
                     
 
-                    orderProducts().map((tx) => {
+                    orderProducts().map((tx: Transaction) => {
 
-                            if ((tx.info === "Mint Order Paid" || tx.info === "Mint Order Processing"|| tx.info === "Mint Order Submitted") && tx.erg_address === address && tx.info != "Mint Order Success") {
+                        if (tx.info !== "Mint Order Success" && [ "Mint Order Paid", "Mint Order Processing", "Mint Order Submitted"].includes(tx.info) && tx.erg_address === address) {
                                 
-                                return <tbody>
+                                return <tbody key={tx.id}>
                                     <tr>
                                     <td className="TD1" >{tx.datetime}</td>
 
                                     <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.ebtc_mint_tx_id}>{tx.amount} eBTC </a> </td>
-                                    <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.erg_txid}>{Math.round((0.001+ bridge * tx.amount) * 100000000) / 100000000} BTC </a>
+                                    <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.erg_txid}>{(Math.round(((tx.amount*.005)+0.0001)*100000000)/100000000).toString()} BTC </a>
                                     </td>
 
                                     <td className="TD1">{tx.id ? tx.id.substring(0, 7) + '-' + tx.id.substring(tx.id.length - 7, tx.id.length) : ""}</td>
@@ -190,12 +202,12 @@ function Transactions() {
                                 </tbody>
                             }
                             if(tx.info === "Mint Order Success" && tx.erg_address === address) {
-                                return <tbody>
+                                return <tbody key={tx.id}>
                                     <tr >
                                     <td className="TD1" >{tx.datetime}</td>
 
                                     <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.ebtc_mint_tx_id}>{tx.amount} eBTC </a> </td>
-                                    <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.erg_txid}>{Math.round((0.001+ bridge * tx.amount) * 100000000) / 100000000} BTC </a>
+                                    <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.erg_txid}>{(Math.round(((tx.amount*.005)+0.0001)*100000000)/100000000).toString()} BTC </a>
                                     </td>
 
                                     <td className="TD1">{tx.id ? tx.id.substring(0, 7) + '-' + tx.id.substring(tx.id.length - 7, tx.id.length) : ""}</td>
@@ -216,7 +228,7 @@ function Transactions() {
     }
 
     function RedeemPage() {
-        const bridge = 0.005
+
         return (
             <div className='mainmenu_transaction'>
                 <div>
@@ -236,15 +248,15 @@ function Transactions() {
                         <tbody className="menuHR2"/>
                         
                         {
-                            orderProducts().map((tx) => {
+                            orderProducts().map((tx: Transaction) => {
                                     if ((tx.info === "Redeem Order Paid" || tx.info === "Redeem Order Processing"|| tx.info === "Redeem Order Submitted") && tx.erg_address === address) {
 
-                                        return <tbody>
+                                        return <tbody key={tx.id}>
                                             <tr >
                                             <td className="TD1" >{tx.datetime}</td>
 
                                             <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.ebtc_mint_tx_id}>{tx.amount} eBTC </a> </td>
-                                            <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.erg_txid}>{Math.round((bridge * tx.amount + 0.0001 + 0.05) * 100000000) / 100000000} BTC </a>
+                                            <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.erg_txid}>{(Math.round(((tx.amount*.005)+0.0001)*100000000)/100000000).toString()} BTC </a>
                                             </td>
 
                                             <td className="TD1">{tx.id ? tx.id.substring(0, 7) + '-' + tx.id.substring(tx.id.length - 7, tx.id.length) : ""}</td>
@@ -253,12 +265,12 @@ function Transactions() {
                                         </tbody>
                                     }
                                     if(tx.info === "Redeem Order Success" && tx.erg_address === address) {
-                                        return <tbody>
+                                        return <tbody key={tx.id}>
                                             <tr >
                                             <td className="TD1" >{tx.datetime}</td>
 
                                             <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.ebtc_mint_tx_id}>{tx.amount} eBTC </a> </td>
-                                            <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.erg_txid}>{Math.round((bridge * tx.amount + 0.0001 + 0.05) * 100000000) / 100000000} BTC </a>
+                                            <td className="TD1"><a href={"https://explorer.ergoplatform.com/en/transactions/"+ tx.erg_txid}>{(Math.round(((tx.amount*.005)+0.0001)*100000000)/100000000).toString()} BTC </a>
                                             </td>
 
                                             <td className="TD1">{tx.id ? tx.id.substring(0, 7) + '-' + tx.id.substring(tx.id.length - 7, tx.id.length) : ""}</td>
