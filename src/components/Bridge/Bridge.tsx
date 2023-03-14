@@ -193,8 +193,9 @@ function Bridge() {
                 setBridgeFeeG(bridgeFee)
                 setReceiveBtcG(receiveBtc)
 
+                let addressStorage: any = localStorage.getItem('address');
     
-                const address = JSON.parse(localStorage.getItem('address'))
+                const address = JSON.parse(addressStorage)
                 address ? handleClickOpen() : setConnectWalletError(true)
         }
 
@@ -205,7 +206,7 @@ function Bridge() {
                 <p className="title">Mint eBTC</p>
                 <input pattern="[0-9]+" min="0" placeholder="0.00"
                        className="btcInput"
-                       size="30"
+                       size={30}
                        id="mintAmount"
                        name="mintAmount"
                        onChange={handleChange}
@@ -281,12 +282,12 @@ function Bridge() {
 
 
 
-        },[BTCAmount, receiveBtc]) 
+        },[BTCAmount, receiveBtc, usdBtcRedeem]) 
 
 
-        const handleChangeRedeem = event => {
+        const handleChangeRedeem = (event:React.ChangeEvent<HTMLInputElement>) => {
             setRedeemAmount(event.target.value);
-            if (event.target.value !== '' && (1000 * event.target.value)/1000 !== 0) {
+            if (event.target.value !== '' && (1000 * parseFloat(event.target.value))/1000 !== 0) {
                 setBTCAmount(event.target.value);
             } else {
                 setBTCAmount('0');
@@ -312,7 +313,7 @@ function Bridge() {
 
         }
 
-        function check(text) {
+        function check(text: string) {
             let regex = /^(?=\w*\d)(?=\w*[a-z])\S{10,60}$/;
             return (regex.test(text));
         }
@@ -340,7 +341,8 @@ function Bridge() {
                 setReceiveBtcG(receiveBtc)
                 setBtcAddressG(btcAddress)
                 setBTCAmountG(parseFloat(BTCAmount).toString())
-                const address = JSON.parse(localStorage.getItem('address'))
+                let addressStorage: any = localStorage.getItem('address');
+                const address = JSON.parse(addressStorage)
                 address ? handleClickOpenRedeem() : setConnectWalletError(true)
 
         }
@@ -349,14 +351,14 @@ function Bridge() {
 
 
 
-        const handleChangeBtcAddress = event => {
+        const handleChangeBtcAddress = (event:React.ChangeEvent<HTMLInputElement>) => {
             setBtcAddress(event.target.value);
         }
 
         return (
             <div id="UNWRAP">
                 <p className="title">Redeem BTC</p>
-                <input pattern="[0-9]+" min="0" className="btcInput"  max="9999" size="30" placeholder="0.00" required
+                <input pattern="[0-9]+" min="0" className="btcInput"  max="9999" size={30} placeholder="0.00" required
                        id="mintAmount"
                        name="mintAmount"
                        onChange={handleChangeRedeem}
@@ -374,7 +376,7 @@ function Bridge() {
                 <br></br>
                 <p/>
                 <p className="title2">BTC Destination Address</p>
-                <input type="text" className="btcInputAddress" size="30" placeholder="Enter your BTC address" onChange={handleChangeBtcAddress} value={btcAddress} onBlur={checkAddress}
+                <input type="text" className="btcInputAddress" size={30} placeholder="Enter your BTC address" onChange={handleChangeBtcAddress} value={btcAddress} onBlur={checkAddress}
                        required/><br/>
                 {checkBTCAddress? "" : <div className='warningBridge address'><Image src='/img/error.png' alt="error" width={16} height={16}/> Please enter a valid BTC Destination Address.</div>}
                 <div className="flex-container">
