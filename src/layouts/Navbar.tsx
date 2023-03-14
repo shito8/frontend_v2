@@ -71,7 +71,7 @@ function Navbar() {
         }else {document.body.classList.remove('dark');
         setDark(false);}
         }
-    },);
+    },[]);
 
 
     return (
@@ -116,7 +116,7 @@ function Navbar() {
 }
 
 
-function DropDown({selected, setSelected, dark}) {
+function DropDown({selected, setSelected, dark}: { selected: string, setSelected: Function, dark: boolean }) {
     const [isActive, setIsActive] = useState(false)
 
 
@@ -138,8 +138,8 @@ function DropDown({selected, setSelected, dark}) {
             {isActive && (
                 <div className="dropdown-content" id={"drop-content"}>
                     <p id="navText">Select Network</p>
-                    {options.map((option) => (
-                        <div onClick={(e) => {
+                    {options.map((option, index) => (
+                        <div key={index} onClick={(e) => {
                             setSelected(option)
                             setIsActive(false)
                         }}
