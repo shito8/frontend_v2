@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { getUsdBTC, getUsdERG } from '@/utils/getData';
 import QRWindow from './components/QRWindow';
 import ConfirmationWindowRedeem from './components/ConfirmationWindowRedeem';
-
+import { type } from 'os';
 
 
 function Bridge() {
@@ -53,6 +53,7 @@ function Bridge() {
     }
 
     const [visible, SetVisible] = useState(true);
+
 
     function DownUp() {
         if (visible) {
@@ -109,7 +110,13 @@ function Bridge() {
         </div>
     )
 
-    function MintPage() {
+
+    type BridgeProps = {
+        eBTC: string;
+        bridgeFee: string;
+      }
+
+    function MintPage(props: BridgeProps) {
 
         const [mintAmount, setMintAmount] = useState('');
         const [usdBtcMint, setUsdBtcMint] = useState('0');
@@ -239,7 +246,12 @@ function Bridge() {
         )
     }
 
-    function RedeemPage() {
+    type ReddemProps = {
+        eBTC: string;
+        btcAddress: string;
+      }
+
+    function RedeemPage(props: ReddemProps) {
         const [redeemAmount, setRedeemAmount] = useState('');
         const [usdBtcRedeem, setUsdBtcRedeem] = useState('0');
         const [btcAddress, setBtcAddress] = useState('');
