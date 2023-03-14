@@ -17,8 +17,12 @@ import firebaseConfig from "../../../../firebase/firebaseConfig";
 
 /////////////////////////////////
 
-
-function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
+function QRWindow({ eBTC, popup, setPopup, receiveBtc }: {
+    eBTC: string,
+    popup: boolean,
+    setPopup: React.Dispatch<React.SetStateAction<boolean>>,
+    receiveBtc: string
+  }) {
 
     const VAULT_BTC_WALLET_ADDRESS = `${process.env.NEXT_PUBLIC_VAULT_BTC_WALLET_ADDRESS}`
 
@@ -29,12 +33,12 @@ function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
         }
       }, []);
       const analytics = useMemo(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && app !== undefined) {
           return getAnalytics(app);
         }
       }, [app]);
       const db = useMemo(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && app !== undefined) {
           return getFirestore(app);
         }
       }, [app]);
@@ -59,6 +63,7 @@ function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
         // TODO Write to DB
 
         try {
+            if(db){
             const docRef = await addDoc(collection(db, "payments"), {
                 erg_address: nautilusAddress,
                 amount: eBTC,
@@ -66,6 +71,7 @@ function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
 
                 info: "Mint Order Paid"
             });
+        }
 
         } catch (e) {
             console.error("Error adding document: ", e);
@@ -79,12 +85,14 @@ function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
         // TODO Write to DB
 
         try {
+            if(db){
             const docRef = await addDoc(collection(db, "users"), {
                 erg_address: nautilusAddress,
                 amount: eBTC,
                 datetime: new Date().toUTCString(),
                 info: "Mint Order Submitted"
             });
+        }
 
         } catch (e) {
             console.error("Error adding document: ", e);
@@ -94,15 +102,13 @@ function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
 
 
 
-    const getVaultAddress = () => {
-        setVaultAddress(VAULT_BTC_WALLET_ADDRESS)
-    }
-
-
     useEffect(() => {
-        getVaultAddress()
-
-    }, [])
+        const getVaultAddress = () => {
+          setVaultAddress(VAULT_BTC_WALLET_ADDRESS);
+        };
+      
+        getVaultAddress();
+      }, [VAULT_BTC_WALLET_ADDRESS]);
 
 
     const THREE_DAYS_IN_MS = 1 * 24 * 60 * 60 * 1000;
@@ -129,8 +135,11 @@ function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
 
 
         function btnCopy() {
-            const btnCopy = document.querySelector(".labelAdd").childNodes[0]
-            navigator.clipboard.writeText(btnCopy.innerHTML)
+            const btnCopy = document.querySelector(".labelAdd")?.childNodes[0]
+            if(btnCopy){
+                const textContent = btnCopy.textContent ?? "";
+                navigator.clipboard.writeText(textContent)
+            }
             setCopy("true");
             setTimeout(() => {
                 setCopy("false");
@@ -171,7 +180,7 @@ function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
                         <label className="SingleTrans1">Using Moonshine Wallet,<br/>Send {eBTC} BTC</label>
                         <p></p>
                         <label className="SingleTrans2">In a single transaction to: </label>
-                        <div type="text" className="addressBTC">
+                        <div className="addressBTC">
                             <div className="labelAdd" onClick={btnCopy}>
                                 <p>{vaultAddress}</p>
                                 <Image id="copy" className="sun__mode"
@@ -203,7 +212,7 @@ function QRWindow({eBTC, popup, setPopup, receiveBtc}) {
                             </div>
                         </div>
                         <div className="note">
-                            <span><b>Note:</b> Payments may take over 10 minutes to confirm. Don't worry, your funds are safe :)</span>
+                            <span><b>Note:</b> Payments may take over 10 minutes to confirm. {"Don't"} worry, your funds are safe :)</span>
                         </div>
 
                         <button className="btnPayment" onClick={confirmQR}>{spinQR ? <div className='spinner QR'></div>:""}I have sent the deposit</button>

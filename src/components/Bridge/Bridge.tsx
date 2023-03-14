@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { getUsdBTC, getUsdERG } from '@/utils/getData';
 import QRWindow from './components/QRWindow';
 import ConfirmationWindowRedeem from './components/ConfirmationWindowRedeem';
-import { type } from 'os';
 
 
 function Bridge() {
