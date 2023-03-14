@@ -149,10 +149,10 @@ function Bridge() {
 
 
 
-        const handleChange = event => {
+        const handleChange = (event:React.ChangeEvent<HTMLInputElement>) => {
             setMintAmount(event.target.value);
 
-            if (event.target.value !== '' && (1000 * event.target.value)/1000 !== 0) {
+            if (event.target.value !== '' && (1000 * parseFloat(event.target.value))/1000 !== 0) {
                 setAnetaBTCAmount(event.target.value);
             }
             else {
