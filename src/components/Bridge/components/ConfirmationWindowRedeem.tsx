@@ -8,7 +8,13 @@ import Image from 'next/image';
 
 
 
-function ConfirmationWindowRedeem({eBTC, btcAddress, popupr, setPopupr, receiveBtc}) {
+function ConfirmationWindowRedeem({eBTC, btcAddress, popupr, setPopupr, receiveBtc}:{
+    eBTC: string,
+    btcAddress: string,
+    popupr: boolean,
+    setPopupr: React.Dispatch<React.SetStateAction<boolean>>,
+    receiveBtc: string
+}) {
 
     const [nautilusAddress, setNautilusAddress] = useState<any>('');
 
@@ -52,7 +58,7 @@ function ConfirmationWindowRedeem({eBTC, btcAddress, popupr, setPopupr, receiveB
                 return (
                     <Wait/>
                 )
-            }
+            }else return <></>
 
     }
 

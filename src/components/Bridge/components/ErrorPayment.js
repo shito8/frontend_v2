@@ -33,7 +33,7 @@ function ErrorPayment({popupr, setPopupr}) {
                     <p>Please Try Again</p>
                 </div>
             </div>
-        </div> : ""
+        </div> : <></>
     )
 }
 
