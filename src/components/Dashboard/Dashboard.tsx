@@ -36,7 +36,7 @@ function Dashboard() {
 
 
 
-    const openInNewTab = (url) => {
+    const openInNewTab = (url: any) => {
         window.open(url, '_blank', 'noreferrer');
     };
 

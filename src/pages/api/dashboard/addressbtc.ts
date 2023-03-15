@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-type Data = {
-    message: string
+type ResponseData = {
+  message: string,
+  err?: any
 }
 
 
@@ -9,7 +10,7 @@ const urlBtcAddress = `${process.env.URL_BTC_ADDRESS}`;
 
 export default function handler(
     req: NextApiRequest,
-    res: NextApiResponse<Data>
+    res: NextApiResponse<ResponseData>
   ) {
 
     const { authorization } = req.headers;
@@ -24,7 +25,7 @@ export default function handler(
             res.status(200).json({ ...data });
           })
         .catch((err) => {
-            res.status(500).json({ err });
+            res.status(500).json({ message: 'Internal Server Error', err });
         });
 
   }

@@ -7,28 +7,57 @@ import {getFirestore} from "firebase/firestore";
 import {getAnalytics} from "firebase/analytics";
 // Add a second document with a generated ID.
 import {addDoc, collection, getDocs} from "firebase/firestore";
-import firebaseConfig from "../../../../firebase/firebaseConfig";
+import { getFirebase } from "../../../utils/getData";
 
 
 /////////////////////////////////
 
 function RedeemConfWindow({eBTC, btcAddress, nautilusAddress, txInfo, popupr, setPopupr, receiveBtc}) {
 
+
+  const [firebaseLoaded, setFirebaseLoaded] = useState(false);
+
+  const [firebaseConfig, setFirebaseConfig] = useState({
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: "",
+      measurementId: ""
+    });
+    
+    useEffect(() => {
+      getFirebase().then((data) => {
+        setFirebaseConfig({
+          apiKey: data.apiKey,
+          authDomain: data.authDomain,
+          projectId: data.projectId,
+          storageBucket: data.storageBucket,
+          messagingSenderId: data.messagingSenderId,
+          appId: data.appId,
+          measurementId: data.measurementId
+        });
+        setFirebaseLoaded(true);
+      });
+    }, []);
+
+
     const app = useMemo(() => {
-        if (typeof window !== 'undefined') {
-          return initializeApp(firebaseConfig);
-        }
-      }, []);
-      const analytics = useMemo(() => {
-        if (typeof window !== 'undefined') {
-          return getAnalytics(app);
-        }
-      }, [app]);
-      const db = useMemo(() => {
-        if (typeof window !== 'undefined') {
-          return getFirestore(app);
-        }
-      }, [app]);
+      if (firebaseLoaded && typeof window !== 'undefined') {
+        return initializeApp(firebaseConfig);
+      }
+    }, [firebaseConfig, firebaseLoaded]);
+    const analytics = useMemo(() => {
+      if (firebaseLoaded && typeof window !== 'undefined' && app !== undefined) {
+        return getAnalytics(app);
+      }
+    }, [firebaseLoaded, app]);
+    const db = useMemo(() => {
+      if (firebaseLoaded && typeof window !== 'undefined' && app !== undefined) {
+        return getFirestore(app);
+      }
+    }, [firebaseLoaded, app]);
 
 
 
@@ -49,6 +78,7 @@ function RedeemConfWindow({eBTC, btcAddress, nautilusAddress, txInfo, popupr, se
 
 
     useEffect(() => {
+      if(firebaseLoaded){
         async function writeToDB(nautilusAddress, btcAddress, eBTC, txInfo) {
           try {
             const docRef = await addDoc(collection(db, "users"), {
@@ -65,7 +95,8 @@ function RedeemConfWindow({eBTC, btcAddress, nautilusAddress, txInfo, popupr, se
         }
       
         writeToDB(nautilusAddress, btcAddress, eBTC, txInfo);
-      }, [nautilusAddress, btcAddress, eBTC, txInfo, db]);
+      }
+      }, [nautilusAddress, btcAddress, eBTC, txInfo, db, firebaseLoaded]);
 
 
 
