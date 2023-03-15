@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
 import {OutputBuilder, SConstant, SColl, TransactionBuilder, SByte, SLong} from "@fleet-sdk/core";
 
-
+declare const ergo: any;
 
 const TOKEN_ID = `${process.env.NEXT_PUBLIC_TOKEN_ID_EBTC}`;
 

@@ -1,6 +1,9 @@
 import React, {useEffect, useState, useMemo } from "react";
 import Image from 'next/image';
 
+declare const ergo: any;
+declare const ergoConnector: any;
+
 function Navbar() {
 
 
