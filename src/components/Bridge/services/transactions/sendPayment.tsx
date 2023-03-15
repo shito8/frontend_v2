@@ -7,15 +7,14 @@ const TOKEN_ID = `${process.env.NEXT_PUBLIC_TOKEN_ID_EBTC}`;
 
 const VAULT_ERG_WALLET_ADDRESS = `${process.env.NEXT_PUBLIC_VAULT_ERG_WALLET_ADDRESS}`;
 
-const sendPaymentFunction = async function sendTransaction1(price, btcAddress, nautilusAddress) {
-
+const sendPaymentFunction = async function sendTransaction1(price: string, btcAddress: string, nautilusAddress: string) {
 
     let result = ''
     let currentHeight = await ergo.get_current_height();
 
     let amountToSend = BigInt(50000000);
 
-    let tokenAmountCalculator = price * 100000000;
+    let tokenAmountCalculator = parseFloat(price) * 100000000;
     let tokenAmountTrunc = Math.trunc(tokenAmountCalculator)
     let tokenAmountToSend = BigInt(tokenAmountTrunc);
     let feeAmount = BigInt(20000000);
@@ -40,7 +39,7 @@ const sendPaymentFunction = async function sendTransaction1(price, btcAddress, n
                 })
             )
             .sendChangeTo(nautilusAddress).payMinFee()
-            .build("EIP-12")
+            .build()
             .toEIP12Object();
 
 
