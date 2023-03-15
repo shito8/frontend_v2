@@ -9,20 +9,18 @@ function Menu() {
 
                 let menuActive = document.querySelectorAll(".menu-item")
         
-                    for(let i=0; i<menuActive.length; i++){
-                        
-                        if(menuActive[i] == window.location.href){
-                            menuActive[i].classList.add("active")
-                        }
+                for (const items of menuActive) {
+                    if (items.getAttribute("href") == window.location.pathname) {
+                        items.classList.add("active");
+                    }
                 
-                        menuActive[i].addEventListener("click", function(){
-                            for(const items of menuActive){
-                                
-                                items.classList.remove("active")
-                            }
-                            this.classList.add("active");
-                            })
+                    items.addEventListener("click", function(this: HTMLElement) {
+                        for (const item of menuActive) {
+                            item.classList.remove("active");
                         }
+                        this.classList.add("active");
+                    });
+                }
         }
       }, []);
 
