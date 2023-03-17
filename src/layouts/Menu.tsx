@@ -24,12 +24,6 @@ function Menu() {
         }
       }, []);
 
-
-
-
-
-    
-
     return (
         <div className="sidebar" id="sidebar">
             <div className="menuTop">
@@ -79,9 +73,7 @@ function Menu() {
             <hr id="menuHR"></hr>
             <ul>
 
-            <Link href="/feedback" className="menu-item">
-
-            
+            <Link href="/feedback" className="menu-item">      
 
                 <div className="menu-icon">
                     <Image src='/img/feedback_dark.png' alt="anetaFeedback" id="Vector" className="dark__mode" width={16} height={15}/>
@@ -93,7 +85,6 @@ function Menu() {
             
 
             </Link>
-
 
             <a href="https://docs.anetabtc.io/" target="_blank" className="menu-item">
                 <div className="menu-icon">

@@ -168,7 +168,7 @@ body.dark .dark__mode{
     border-radius: 5px;
 
     margin: 17.5px 5px 10px 5px;
-    font-weight: 500;
+    font-weight: var(--font-weight-semibold);
 
     display: flex;
     flex-direction: row;
@@ -218,17 +218,15 @@ body.dark .menuButton {
     border: none;
     text-align: center;
     text-decoration: none;
-
     font-size: 14px;
     cursor: pointer;
     border-radius: 5px;
-
     margin: 17.5px 5px 10px 5px;
-
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    font-weight: var(--font-weight-semibold);
 }
 
 body.dark .dropdown .dropdown-btn {
@@ -661,7 +659,7 @@ body.dark .btcInput {
 }
 
 .lblInp #usd{
-    font-weight: var(--font-weight-regular);
+    font-weight: var(--font-weight-semibold);
     font-size: 16px;
 }
 
@@ -725,6 +723,7 @@ body.dark .warningBridge {
     font-size: 16px;
     right: 31px;
     top: 250px;
+    font-weight: var(--font-weight-semibold);
 }
 
 
@@ -747,6 +746,7 @@ body.dark .warningBridge {
 
 .bridgeFee #usd {
     text-align: right;
+    font-weight: var(--font-weight-semibold);
 }
 
 
@@ -759,6 +759,7 @@ body.dark .bridgeFee{
 
 #usd.feeUSD1 {
     top: 350px;
+    font-weight: var(--font-weight-semibold);
 }
 
 .bridgeFee.unWrap{
@@ -1775,9 +1776,10 @@ body.dark .mainmenu_transaction .menuHR2{
 
 .TD1 {
     width: 20%;
-    font-size: 12px;
+    font-size: 14px;
     padding: 10px;
     text-align: center;
+    font-weight: var(--font-weight-bold);
 }
 
 .TD1 b{
@@ -1909,7 +1911,7 @@ body.dark .dashCircle {
 
     background: var(--primary-color-light);
     border-radius: 15px;
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
 
     display: flex;
     justify-content: center;
@@ -2094,8 +2096,9 @@ body.dark .feedback-page__content-btn {
     .textMob h2{
         width: 80%;
         text-align: center;
-        font-weight: 500;
+        font-weight: var(--font-weight-semibold);
         font-size: 20px;
+        color: var(--secundary-color-font);
     }
 
     .infoMob{
@@ -2112,6 +2115,8 @@ body.dark .feedback-page__content-btn {
         max-width: 400px;
         font-weight: 400;
         font-size: 16px;
+        color: var(--secundary-color-font);
+        font-weight: var(--font-weight-semibold);
     }
 
     .buttonMob{
@@ -2122,6 +2127,11 @@ body.dark .feedback-page__content-btn {
         align-items: center;
         background-color: var(--primary-color-dark);
         border-radius: 8px;
+    }
+
+    .buttonMob a{
+        color: var(--secundary-color-font);
+        font-weight: var(--font-weight-semibold);
     }
 
     .mobBack{

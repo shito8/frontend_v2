@@ -2,10 +2,6 @@ import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
 import { addressBtc, addressErg } from '../../utils/getData'
 
-
-
-
-
 function Dashboard() {
 
 
@@ -13,10 +9,7 @@ function Dashboard() {
     const [eBTCAmount, setEBTCAmount] = useState<any>()
     const [ergAmount, setERGAmount] = useState<any>()
     const [btcLoader, setBtcLoader] = useState(false)
-    const [ergLoader, setErgLoader] = useState(false)
-    
-
-     
+    const [ergLoader, setErgLoader] = useState(false)  
 
     useEffect(() => {
 
@@ -29,12 +22,8 @@ function Dashboard() {
         addressErg().then((data) => {
             setERGAmount((data.confirmedBalance/1000000000).toString().substring(0,6))
             setErgLoader(true)
-          });
-  
-  
+          });  
       }, []);
-
-
 
     const openInNewTab = (url: any) => {
         window.open(url, '_blank', 'noreferrer');
@@ -43,7 +32,6 @@ function Dashboard() {
     const urlBtc = `https://tbtc.bitaps.com/${process.env.NEXT_PUBLIC_VAULT_BTC_WALLET_ADDRESS}`
 
     const urlErg = `https://explorer.ergoplatform.com/en/addresses/${process.env.NEXT_PUBLIC_VAULT_ERG_WALLET_ADDRESS}`
-
 
     return (
         <div id="pageDashboard">
